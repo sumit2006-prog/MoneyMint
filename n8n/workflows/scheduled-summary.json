@@ -1,0 +1,54 @@
+{
+  "name": "MoneyMint daily Telegram summary",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 21 * * *" }] } },
+      "id": "daily-schedule",
+      "name": "Every day at 9 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MONEYMINT_API_URL + '/api/integrations/telegram/summaries' }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "x-telegram-webhook-secret", "value": "={{ $env.MONEYMINT_TELEGRAM_WEBHOOK_SECRET }}" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { period: 'today' } }}",
+        "options": {}
+      },
+      "id": "get-opted-in-summaries",
+      "name": "Get opted-in summaries",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": { "mode": "runOnceForAllItems", "jsCode": "return ($input.first().json.summaries || []).map((summary) => ({ json: summary }));" },
+      "id": "split-summaries",
+      "name": "One chat per summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": { "resource": "message", "operation": "sendMessage", "chatId": "={{ $json.chatId }}", "text": "={{ $json.text }}", "additionalFields": {} },
+      "id": "send-summary",
+      "name": "Send Telegram summary",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [940, 300],
+      "credentials": { "telegramApi": { "name": "Connect your Telegram bot" } }
+    }
+  ],
+  "connections": {
+    "Every day at 9 PM": { "main": [[{ "node": "Get opted-in summaries", "type": "main", "index": 0 }]] },
+    "Get opted-in summaries": { "main": [[{ "node": "One chat per summary", "type": "main", "index": 0 }]] },
+    "One chat per summary": { "main": [[{ "node": "Send Telegram summary", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1", "timezone": "Asia/Kolkata" }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "moneymint",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:client": "vite --host 0.0.0.0",
+    "dev:server": "npm --prefix server run dev",
+    "build": "vite build",
+    "start": "npm --prefix server start",
+    "seed": "npm --prefix server run seed",
+    "test": "node --test",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5",
+    "csv-parse": "^7.0.3",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.468.0",
+    "mongoose": "^8.9.5",
+    "multer": "^2.0.2",
+    "pdf-parse": "^1.1.1",
+    "pdfkit": "^0.16.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.18.4",
+    "recharts": "^2.15.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^15.15.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.0.7"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  }
+}
